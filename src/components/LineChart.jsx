@@ -2,15 +2,41 @@ import React from 'react'
 import { Line } from 'react-chartjs-2';
 import { Typography, Col, Row } from 'antd';
 
+import { 
+    Chart as ChartJS, 
+    LineElement, 
+    PointElement, 
+    CategoryScale, 
+    LinearScale, 
+    Tooltip, 
+    Legend 
+} from 'chart.js';
+
+ChartJS.register(
+    LineElement, 
+    PointElement, 
+    CategoryScale, 
+    LinearScale, 
+    Tooltip, 
+    Legend 
+);
+
+
 const { Title } = Typography;
 
 const LineChart = ({ coinHistory, currentPrice, coinName }) => {
+    
     const coinPrice = [];
     const coinTimeStamp = [];
-    for(let i = 0; i < coinHistory?.data?.history?.length; i++){
-        coinPrice.push(coinHistory?.data?.history[i].price);
-        coinTimeStamp.push(new Date(coinHistory?.data?.history[i].timestamp).toLocaleDateString());
+    for(let i = 0; i < coinHistory?.data?.history?.length; i += 1){
+        if(coinHistory?.data?.history[i].price && coinHistory?.data?.history[i]){
+            coinPrice.push(coinHistory?.data?.history[i].price);
+            coinTimeStamp.push(new Date(coinHistory?.data?.history[i].timestamp).toLocaleDateString());            
+        }
     }
+
+    // console.log(coinPrice)
+    // console.log(coinTimeStamp)
 
     const data = {
         labels: coinTimeStamp,
@@ -27,7 +53,7 @@ const LineChart = ({ coinHistory, currentPrice, coinName }) => {
 
     const options = {
         scales: {
-            yAxis: [
+            yAxes: [
                 {
                     ticks: {
                         beginAtZero: true
@@ -37,7 +63,6 @@ const LineChart = ({ coinHistory, currentPrice, coinName }) => {
         }
     }
 
-    console.log(coinHistory)
     return (
     <>
         <Row className="chart-header">

@@ -15,11 +15,10 @@ const CryptoDetails = () => {
   const {coinId} = useParams();
   const [timePeriod, setTimePeriod] = React.useState('7d');
   const {data, isFetching} = useGetCryptoDetailsQuery(coinId);
-  const {data: coinHistory} = useGetCryptoHistoryQuery({coinId, timePeriod});
+  const {data: coinHistory, isFetching: fetchingHistory} = useGetCryptoHistoryQuery({coinId, timeperiod: timePeriod});
   const cryptoDetails = data?.data?.coin;
-
-  // console.log(data)
-  if(isFetching) return "Loading..."
+  
+  if(fetchingHistory) return "Loading..."
   const time = ['3h', '24h', '7d', '30d', '1y', '3m', '3y', '5y'];
 
   const stats = [
@@ -30,7 +29,7 @@ const CryptoDetails = () => {
     { title: 'All-time-high(daily avg.)', value: `$ ${cryptoDetails?.allTimeHigh?.price && millify(cryptoDetails?.allTimeHigh?.price)}`, icon: <TrophyOutlined /> },
   ];
 
-  // console.log(cryptoDetails)
+  // console.log(coinHistory)
 
   const genericStats = [
     { title: 'Number Of Markets', value: cryptoDetails?.numberOfMarkets, icon: <FundOutlined /> },
@@ -40,7 +39,11 @@ const CryptoDetails = () => {
     { title: 'Circulating Supply', value: `$ ${cryptoDetails?.supply?.circulating && millify(cryptoDetails?.supply?.circulating)}`, icon: <ExclamationCircleOutlined /> },
   ];
 
- 
+  if(fetchingHistory) return 'Loading...';
+
+  // console.log({coinHistory})
+  // console.log({cryptoDetails})
+
   return (
     <Col className='coin-detail-container'>
       <Col className='coin-heading-container'>
@@ -59,12 +62,13 @@ const CryptoDetails = () => {
         >
           {time.map((date) => <Option key={date}>{date}</Option>)}
         </Select>
-
-        <LineChart 
+        {coinHistory &&  
+          <LineChart 
           coinHistory = {coinHistory} 
           currentPrice = {millify(cryptoDetails?.price)} 
           coinName = {cryptoDetails?.name}
-        />
+          />
+        }       
         
         <Col className='stats-container'>
           <Col className='coin-value-statistics'>
